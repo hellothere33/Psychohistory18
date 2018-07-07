@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="470" Width="760">
     <Grid Margin="0,0,0,0">
-        <Button Content="Run" Margin="10,10,512.571,296.857"/>
-        <TextBlock TextWrapping="Wrap" Text="Messages" Margin="10,255,10.286,10.143"/>
+        <Button  x:Name="btRun" Content="Run" Margin="10,10,512.571,296.857"/>
+        <TextBlock x:Name="txMsg" TextWrapping="Wrap" Text="Messages" Margin="10,255,10.286,10.143"/>
 
     </Grid>
 </Window>
