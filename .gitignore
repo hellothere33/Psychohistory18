@@ -196,3 +196,6 @@ InternalProjects/packages/
 AI Projects/packages/
 Datacup2018/Data/
 Data/
+Andy/*.dll
+Andy/*.exe
+Andy/CsvHelper.xml

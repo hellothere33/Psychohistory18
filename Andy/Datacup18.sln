@@ -1,0 +1,63 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadCsv", "LoadCsv\LoadCsv.csproj", "{F5A1C168-58D1-4C35-96DF-936AD2B6D75E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util.Csv", "Utilities\Util.Csv\Util.Csv.csproj", "{4021B625-B037-47CF-A16F-0BF7A943CC5B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{38900B57-6580-4BA2-A387-C90FB1C0644D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util.IO", "Utilities\Util.IO\Util.IO.csproj", "{E8A919C9-6623-4712-8F90-E457B60F14D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util.Json", "Utilities\Util.Json\Util.Json.csproj", "{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util.Net", "Utilities\Util.Net\Util.Net.csproj", "{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apps", "Apps\Apps.csproj", "{4A27A113-5765-4DC8-B522-5CA78A515936}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5A1C168-58D1-4C35-96DF-936AD2B6D75E}.Debug|x64.ActiveCfg = Debug|x64
+		{F5A1C168-58D1-4C35-96DF-936AD2B6D75E}.Debug|x64.Build.0 = Debug|x64
+		{F5A1C168-58D1-4C35-96DF-936AD2B6D75E}.Release|x64.ActiveCfg = Release|x64
+		{F5A1C168-58D1-4C35-96DF-936AD2B6D75E}.Release|x64.Build.0 = Release|x64
+		{4021B625-B037-47CF-A16F-0BF7A943CC5B}.Debug|x64.ActiveCfg = Debug|x64
+		{4021B625-B037-47CF-A16F-0BF7A943CC5B}.Debug|x64.Build.0 = Debug|x64
+		{4021B625-B037-47CF-A16F-0BF7A943CC5B}.Release|x64.ActiveCfg = Release|x64
+		{4021B625-B037-47CF-A16F-0BF7A943CC5B}.Release|x64.Build.0 = Release|x64
+		{E8A919C9-6623-4712-8F90-E457B60F14D8}.Debug|x64.ActiveCfg = Debug|x64
+		{E8A919C9-6623-4712-8F90-E457B60F14D8}.Debug|x64.Build.0 = Debug|x64
+		{E8A919C9-6623-4712-8F90-E457B60F14D8}.Release|x64.ActiveCfg = Release|x64
+		{E8A919C9-6623-4712-8F90-E457B60F14D8}.Release|x64.Build.0 = Release|x64
+		{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98}.Debug|x64.ActiveCfg = Debug|x64
+		{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98}.Debug|x64.Build.0 = Debug|x64
+		{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98}.Release|x64.ActiveCfg = Release|x64
+		{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98}.Release|x64.Build.0 = Release|x64
+		{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}.Debug|x64.ActiveCfg = Debug|x64
+		{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}.Debug|x64.Build.0 = Debug|x64
+		{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}.Release|x64.ActiveCfg = Release|x64
+		{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}.Release|x64.Build.0 = Release|x64
+		{4A27A113-5765-4DC8-B522-5CA78A515936}.Debug|x64.ActiveCfg = Debug|x64
+		{4A27A113-5765-4DC8-B522-5CA78A515936}.Debug|x64.Build.0 = Debug|x64
+		{4A27A113-5765-4DC8-B522-5CA78A515936}.Release|x64.ActiveCfg = Release|x64
+		{4A27A113-5765-4DC8-B522-5CA78A515936}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4021B625-B037-47CF-A16F-0BF7A943CC5B} = {38900B57-6580-4BA2-A387-C90FB1C0644D}
+		{E8A919C9-6623-4712-8F90-E457B60F14D8} = {38900B57-6580-4BA2-A387-C90FB1C0644D}
+		{BFB3C808-C8DD-4F40-8E6C-FB42E697BF98} = {38900B57-6580-4BA2-A387-C90FB1C0644D}
+		{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E} = {38900B57-6580-4BA2-A387-C90FB1C0644D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7080604-EE5F-41EF-A08C-93C6B6FDF548}
+	EndGlobalSection
+EndGlobal
