@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="DataFacturation.cs" />
     <Compile Include="DataPaiements.cs" />
+    <Compile Include="DataPerformance.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
