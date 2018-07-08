@@ -94,5 +94,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LoadCsv\LoadCsv.csproj">
+      <Project>{f5a1c168-58d1-4c35-96df-936ad2b6d75e}</Project>
+      <Name>LoadCsv</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

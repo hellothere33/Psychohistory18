@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LoadCsv</RootNamespace>
     <AssemblyName>LoadCsv</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -31,9 +32,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsvHelper">
-      <HintPath>..\Libraries\CsvHelper\CsvHelper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataFacturation.cs" />
+    <Compile Include="DataPaiements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -86,8 +85,16 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Utilities\Util.Csv\Util.Csv.csproj">
+      <Project>{4021b625-b037-47cf-a16f-0bf7a943cc5b}</Project>
+      <Name>Util.Csv</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utilities\Util.IO\Util.IO.csproj">
+      <Project>{e8a919c9-6623-4712-8f90-e457b60f14d8}</Project>
+      <Name>Util.IO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Util.Net\Util.Net.csproj">
-      <Project>{EF442D12-0EBC-46E6-BD5F-7C0D68E4569E}</Project>
+      <Project>{ef442d12-0ebc-46e6-bd5f-7c0d68e4569e}</Project>
       <Name>Util.Net</Name>
     </ProjectReference>
   </ItemGroup>
