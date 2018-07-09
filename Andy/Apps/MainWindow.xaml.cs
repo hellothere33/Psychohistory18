@@ -28,17 +28,11 @@ namespace Apps
 
         private void btRun_Click(object sender, RoutedEventArgs e)
         {
-            var fileFacturationTrain  = FileFacturation.LoadCsvFile(@"Data/facturation_train.csv");
-            var fileFacturationTest   = FileFacturation.LoadCsvFile(@"Data/facturation_test.csv");
-            var filePaiementsTrain    = FileFacturation.LoadCsvFile(@"Data/paiements_train.csv");
-            var filePaiementsTest     = FileFacturation.LoadCsvFile(@"Data/paiements_test.csv");
-            var filePerformanceTrain  = FileFacturation.LoadCsvFile(@"Data/performance_train.csv");
-            var filePerformanceTest   = FileFacturation.LoadCsvFile(@"Data/performance_test.csv");
-            var fileTransactionsTrain = FileFacturation.LoadCsvFile(@"Data/transactions_train.csv");
-            var fileTransactionsTest  = FileFacturation.LoadCsvFile(@"Data/transactions_test.csv");
-
-
-
+            txMsg.AppendText("LoadTrainSets\n");
+            FileAnalysis.LoadTrainSets(out _, out _, out _, out _);
+            //txMsg.AppendText("LoadTestSets\n");
+            //FileAnalysis.LoadTestSets();
+            txMsg.AppendText("Done!\n");
         }
     }
 }

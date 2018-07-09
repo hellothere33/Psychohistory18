@@ -24,30 +24,30 @@ namespace LoadCsv
         }
 
         // Methods
-        private void LoadCsv()
+        private async Task LoadCsv()
         {
             rows = uCsv.ReadFromCsv<DataFacturation>(path, delimiter: ",");
+        }
+
+        public List<DataFacturation> GetClientRows(string clientId)
+        {
+            var clientRows = new List<DataFacturation>();
+            if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
+            clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
+            return clientRows;
         }
     }
     public class DataFacturation
     {//ID_CPTE,PERIODID_MY,StatementDate,CurrentTotalBalance,CashBalance,CreditLimit,DelqCycle
         public string ID_CPTE             { get; set; }
-        public string PERIODID_MY         { get; set; }
-        public string StatementDate       { get; set; }
-        public string CurrentTotalBalance { get; set; }
-        public string CashBalance         { get; set; }
-        public string CreditLimit         { get; set; }
-        public string DelqCycle           { get; set; }
+        public DateTime PERIODID_MY       { get; set; }
+        public DateTime StatementDate     { get; set; }
+        public double CurrentTotalBalance { get; set; }
+        public double CashBalance         { get; set; }
+        public double CreditLimit         { get; set; }
+        public int    DelqCycle           { get; set; }
 
-        public DataFacturation() {
-            ID_CPTE              = "";
-            PERIODID_MY          = "";
-            StatementDate        = "";
-            CurrentTotalBalance  = "";
-            CashBalance          = "";
-            CreditLimit          = "";
-            DelqCycle            = "";
-        }
+        public DataFacturation() { }
         public bool IsAMatch(DataFacturation r1)
         {
             if (string.IsNullOrEmpty(r1.ID_CPTE))  return false;
