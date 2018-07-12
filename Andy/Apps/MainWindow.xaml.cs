@@ -28,10 +28,15 @@ namespace Apps
 
         private void btRun_Click(object sender, RoutedEventArgs e)
         {
-            txMsg.AppendText("LoadTrainSets\n");
-            FileAnalysis.LoadTrainSets(out _, out _, out _, out _);
+            //txMsg.AppendText("LoadTrainSets\n");
+            //FileAnalysis.LoadTrainSets(out _, out _, out _, out _);
             //txMsg.AppendText("LoadTestSets\n");
             //FileAnalysis.LoadTestSets();
+
+            var NnRows = Analysis.AnalyzeAndCreateColumnsForNNetwork(true);
+            //Analysis.WriteToCsvFile(@"NnInputs\hypotheses.csv", NnRows);
+            Analysis.CreateNNetworkAndLearn(NnRows);
+
             txMsg.AppendText("Done!\n");
         }
     }

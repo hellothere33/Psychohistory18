@@ -199,3 +199,6 @@ Data/
 Andy/*.dll
 Andy/*.exe
 Andy/CsvHelper.xml
+Andy/packages/
+Andy/*.bin
+Andy/*.xml

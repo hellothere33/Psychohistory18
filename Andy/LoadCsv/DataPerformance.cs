@@ -33,9 +33,11 @@ namespace LoadCsv
             var clientRows = new List<DataPerformance>();
             if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
             clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
+            clientRows = clientRows.OrderByDescending(a => a.PERIODID_MY).ToList();
             return clientRows;
         }
     }
+    [Serializable]
     public class DataPerformance
     {//ID_CPTE,PERIODID_MY,Default
         public string ID_CPTE     { get; set; }

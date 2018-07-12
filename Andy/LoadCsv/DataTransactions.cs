@@ -33,9 +33,11 @@ namespace LoadCsv
             var clientRows = new List<DataTransactions>();
             if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
             clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
+            clientRows = clientRows.OrderByDescending(a => a.TRANSACTION_DTTM).ToList();
             return clientRows;
         }
     }
+    [Serializable]
     public class DataTransactions
     {//ID_CPTE,MERCHANT_CATEGORY_XCD,MERCHANT_CITY_NAME,MERCHANT_COUNTRY_XCD,DECISION_XCD,PRIOR_CREDIT_LIMIT_AMT,
      //TRANSACTION_AMT,TRANSACTION_CATEGORY_XCD,TRANSACTION_DTTM,TRANSACTION_TYPE_XCD,SICGROUP

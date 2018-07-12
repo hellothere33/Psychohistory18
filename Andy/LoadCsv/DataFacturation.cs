@@ -34,9 +34,12 @@ namespace LoadCsv
             var clientRows = new List<DataFacturation>();
             if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
             clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
+            clientRows = clientRows.OrderByDescending(a => a.StatementDate).ToList();
             return clientRows;
         }
+        
     }
+    [Serializable]
     public class DataFacturation
     {//ID_CPTE,PERIODID_MY,StatementDate,CurrentTotalBalance,CashBalance,CreditLimit,DelqCycle
         public string ID_CPTE             { get; set; }

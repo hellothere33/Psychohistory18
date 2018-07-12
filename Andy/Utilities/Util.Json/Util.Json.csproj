@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="uBin.cs" />
     <Compile Include="uJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

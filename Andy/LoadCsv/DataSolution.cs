@@ -36,6 +36,7 @@ namespace LoadCsv
             return clientRows;
         }
     }
+    [Serializable]
     public class DataSolution
     {//ID_CPTE,Default
         public string ID_CPTE { get; set; }
