@@ -23,7 +23,7 @@ namespace LoadCsv
         }
 
         // Methods
-        private async Task LoadCsv()
+        private void LoadCsv()
         {
             rows = uCsv.ReadFromCsv<DataPaiements>(path, delimiter: ",");
         }

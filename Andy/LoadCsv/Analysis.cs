@@ -80,29 +80,41 @@ namespace LoadCsv
             // Split into Training and Testing sets
             Array.Copy(allData, 0, trainData, 0, trainCount);
             Array.Copy(allData, trainCount, testData, 0, rows.Count - trainCount);
-
-
             var allCollection   = CollectionDataSource.Create(allData);
             var trainCollection = CollectionDataSource.Create(trainData);
             var testCollection  = CollectionDataSource.Create(testData);
-            var pipelineAll     = new LearningPipeline();
-            var pipelineTrain   = new LearningPipeline();
-            var pipelineTest    = new LearningPipeline();
-            pipelineAll  .Add(allCollection);
-            pipelineTrain.Add(trainCollection);
-            pipelineTest .Add(testCollection);
-            pipelineAll  .Add(new FastForestBinaryClassifier());
-            pipelineTrain.Add(new FastForestBinaryClassifier());
-            pipelineTest .Add(new FastForestBinaryClassifier());
+
             
+            double acc, auc, f1;
+            PredictionModel<MLNetData, MLNetPredict> modelAll, modelTrain, modelBest;
+            
+          //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new EnsembleBinaryClassifier                      ());
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.83, auc 0.86, f1 0.45
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FastForestBinaryClassifier                    ()); // acc 0.85, auc 0.89, f1 0.46
+            (acc, auc, f1, modelBest)= TrainAndGetMetrics(allCollection, allCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.85, auc 0.88, f1 0.56
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.80, f1 NaN
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.82, auc 0.86, f1 0.16
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.84, auc 0.86, f1 0.40
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.84, auc 0.86, f1 0.40
+            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.86, f1 0.29
+
+
+
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.82, auc 0.84, f1 0.45
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastForestBinaryClassifier                    ()); // acc 0.82, auc 0.83, f1 0.23
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.82, auc 0.84, f1 0.46
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.83, auc 0.85, f1 0.37
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.75, f1 NaN
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.81, auc 0.83, f1 0.14
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.83, auc 0.84, f1 0.39
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.82, auc 0.84, f1 0.43
+            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.83, f1 0.34
 
             // Evaluate a training model
-            var modelTrain = pipelineTrain.Train<MLNetData, MLNetPredict>();
-            var evaluator = new BinaryClassificationEvaluator();
-            var metrics = evaluator.Evaluate(modelTrain, testCollection);
-            Console.WriteLine($"Accuracy: {metrics.Accuracy:P2}");
-            Console.WriteLine($"Auc: {metrics.Auc:P2}");
-            Console.WriteLine($"F1Score: {metrics.F1Score:P2}");
+            //Console.WriteLine($"Accuracy: {metrics.Accuracy:P2}");
+            //Console.WriteLine($"Auc: {metrics.Auc:P2}");
+            //Console.WriteLine($"F1Score: {metrics.F1Score:P2}");
             //var cv = new CrossValidator();
             //CrossValidationOutput<MLNetData, MLNetPredict> cvRes = cv.CrossValidate<MLNetData, MLNetPredict>(pipelineAll);
             //Console.WriteLine($"Rms = {metrics.Rms}");
@@ -111,9 +123,20 @@ namespace LoadCsv
 
             // Train the overall model
             string NnModelPath = @"NnInputs\mlDotNet_Datacup.model";
-            var modelAll = pipelineAll.Train<MLNetData, MLNetPredict>();
-            modelAll.WriteAsync(NnModelPath);
+            modelBest.WriteAsync(NnModelPath);
             return NnModelPath;
+        }
+
+        public static (double acc, double auc, double f1, PredictionModel<MLNetData, MLNetPredict> model) 
+            TrainAndGetMetrics(ILearningPipelineLoader dataTrain, ILearningPipelineLoader dataTest, ILearningPipelineItem trainer)
+        {
+            var pipeline = new LearningPipeline();
+            pipeline  .Add(dataTrain);
+            pipeline  .Add(trainer);
+            var model     = pipeline.Train<MLNetData, MLNetPredict>();
+            var evaluator = new BinaryClassificationEvaluator();
+            var metrics   = evaluator.Evaluate(model, dataTest);
+            return (metrics.Accuracy, metrics.Auc, metrics.F1Score, model);
         }
 
         public static MLNetData[] Convert(List<NnRow> rows)
@@ -176,15 +199,19 @@ namespace LoadCsv
             // nb of delinquent cycles already
             ms.Add(new NnRow(Utils.GetNbOfDelinquencies(rowsFact)));
 
-            // transaction amounts in 4 weeks
-            ms.Add(new NnRow(Utils.GetTransactions(predictionStartDate, rowsTran, 28)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance        (predictionStartDate, rowsFact, 28)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(predictionStartDate, rowsFact, 28)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance        (rowsFact))); // basic statistics such as min, max, average, std, var
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit        (rowsFact))); // basic statistics such as min, max, average, std, var
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(rowsFact))); // basic statistics such as min, max, average, std, var
+            
+            ms.Add(new NnRow(Utils.GetPaiements        (predictionStartDate, rowsPaie, 28))); // paiements amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie))); // basic statistics such as min, max, average, std, var
 
-            // paiements amounts in 4 weeks
-            ms.Add(new NnRow(Utils.GetPaiements   (predictionStartDate, rowsPaie, 28)));
+            ms.Add(new NnRow(Utils.GetTransactions(predictionStartDate, rowsTran, 28))); // transaction amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetTransactionsStats(rowsTran))); // basic statistics such as min, max, average, std, var
 
-            // basic statistics such as min, max, average, std, var
-            ms.Add(new NnRow(Utils.GetTransactionsStats(rowsTran)));
-            ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie)));
+            
 
 
             //---------------------------------------------

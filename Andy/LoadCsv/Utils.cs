@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Util.BinarySerializer;
 using Util.Net;
 using DicFact = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<LoadCsv.DataFacturation>>;
@@ -12,6 +13,13 @@ namespace LoadCsv
 {
     public static class Utils
     {
+        private static bool norm = true;
+        private static double[] NormalizeToOne(double[] nbs)
+        {
+            if (norm) { double max = nbs.Max(); max = max == 0 ? 1 : max; nbs = nbs.Select(i => i / max).ToArray(); } // normalize to be under 1.0
+            return nbs;
+        }
+
         #region Hypotheses
         public static double GetNbOfDelinquencies(List<DataFacturation> facts)
         {
@@ -23,36 +31,52 @@ namespace LoadCsv
             });
             return d;
         }
-        /// <summary>
-        /// Assumption: input data already sorted by most recent first.
-        /// </summary>
+
         public static double[] GetTransactionsStats(List<DataTransactions> list)
         {
-            double[] nbs = NnRow.CreateArray(5);
-            if (uNet.IsNullOrEmpty(list)) return nbs;
-
+            double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
-            for (int i = 0; i < list.Count; i++)
-                vals.Add(list[i].TRANSACTION_AMT);
-
-            var stat = StatsD.Create(vals);
-            nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            for (int i = 0; i < list.Count; i++) vals.Add(list[i].TRANSACTION_AMT);
+            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs = NormalizeToOne(nbs);
             return nbs;
         }
-        /// <summary>
-        /// Assumption: input data already sorted by most recent first.
-        /// </summary>
+
+
         public static double[] GetPaiementsStats(List<DataPaiements> list)
         {
-            double[] nbs = NnRow.CreateArray(5);
-            if (uNet.IsNullOrEmpty(list)) return nbs;
-
+            double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
-            for (int i = 0; i < list.Count; i++)
-                vals.Add(list[i].TRANSACTION_AMT);
-
-            var stat = StatsD.Create(vals);
-            nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            for (int i = 0; i < list.Count; i++) vals.Add(list[i].TRANSACTION_AMT);
+            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+        public static double[] GetFacturationCashBalance(List<DataFacturation> list)
+        {
+            double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
+            var vals = new List<double>();
+            for (int i = 0; i < list.Count; i++) vals.Add(list[i].CashBalance);
+            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+        public static double[] GetFacturationCreditLimit(List<DataFacturation> list)
+        {
+            double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
+            var vals = new List<double>();
+            for (int i = 0; i < list.Count; i++) vals.Add(list[i].CreditLimit);
+            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+        public static double[] GetFacturationCurrentTotalBalance(List<DataFacturation> list)
+        {
+            double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
+            var vals = new List<double>();
+            for (int i = 0; i < list.Count; i++) vals.Add(list[i].CurrentTotalBalance);
+            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs = NormalizeToOne(nbs);
             return nbs;
         }
 
@@ -75,8 +99,58 @@ namespace LoadCsv
                 double sum = shortList.Sum(e => e.TRANSACTION_AMT);
                 nbs[i] = sum;
             }
+            nbs = NormalizeToOne(nbs);
             return nbs;
         }
+
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCashBalance(DateTime predictionStartDate, List<DataFacturation> list, int days)
+        {
+            double[] nbs = NnRow.CreateArray(30);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataFacturation>(list);
+            tempList.OrderByDescending(e => e.PERIODID_MY);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
+                double sum = shortList.Sum(e => e.CashBalance);
+                nbs[i] = sum;
+            }
+            nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCurrentTotalBalance(DateTime predictionStartDate, List<DataFacturation> list, int days)
+        {
+            double[] nbs = NnRow.CreateArray(30);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataFacturation>(list);
+            tempList.OrderByDescending(e => e.PERIODID_MY);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
+                double sum = shortList.Sum(e => e.CurrentTotalBalance);
+                nbs[i] = sum;
+            }
+            nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
@@ -96,6 +170,7 @@ namespace LoadCsv
                 double sum = shortList.Sum(e => e.TRANSACTION_AMT);
                 nbs[i] = sum;
             }
+            nbs = NormalizeToOne(nbs);
             return nbs;
         }
         #endregion
