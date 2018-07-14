@@ -33,9 +33,10 @@ namespace Apps
             //txMsg.AppendText("LoadTestSets\n");
             //FileAnalysis.LoadTestSets();
 
-            var NnRows = Analysis.AnalyzeAndCreateColumnsForNNetwork(true);
+            var NnRows = Analysis.AnalyzeAndCreateColumnsForNNetwork(trainNotTest:true, useFull: true, loadBin: false);
             //Analysis.WriteToCsvFile(@"NnInputs\hypotheses.csv", NnRows);
-            Analysis.CreateNNetworkAndLearn(NnRows);
+            string NnModelPath = Analysis.CreateNNetworkAndLearn(NnRows);
+            Analysis.Predict(NnModelPath);
 
             txMsg.AppendText("Done!\n");
         }

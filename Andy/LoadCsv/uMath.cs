@@ -8,6 +8,10 @@ namespace LoadCsv
 {
     public static class uMath
     {
+        public static int Int(this double d)
+        {
+            return (int)System.Math.Round(d, 0, MidpointRounding.AwayFromZero);
+        }
         public static int CompareDates(DateTime a, DateTime b, bool sortByMostRecentFirst = true)
         {
             //int output = 0;

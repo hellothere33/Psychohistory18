@@ -10,20 +10,37 @@ namespace LoadCsv
     public class FileSolution
     {
         // Properties
-        public string path = string.Empty;
-        public List<DataSolution> rows = null;
+        private string path             = string.Empty;
+        private List<DataSolution> rows = null;
 
         // Constructors
-        private FileSolution(string _path) => path = _path;
+        private FileSolution(string _path, List<DataSolution> _rows)
+        {
+            path = _path;
+            rows = _rows;
+        }
+        public static FileSolution ExportCsvFile(string _path, List<DataSolution> _rows)
+        {
+            var file = new FileSolution(_path, _rows);
+            file.ExportCsv();
+            return file;
+        }
+
+        // Methods
+        private void ExportCsv()
+        {
+            uCsv.WriteToCsv<DataSolution>(path, rows, delimiter: ",");
+        }
+
         public static FileSolution LoadCsvFile(string _path)
         {
-            var file = new FileSolution(_path);
+            var file = new FileSolution(_path, null);
             file.LoadCsv();
             return file;
         }
 
         // Methods
-        private async Task LoadCsv()
+        private void LoadCsv()
         {
             rows = uCsv.ReadFromCsv<DataSolution>(path, delimiter: ",");
         }

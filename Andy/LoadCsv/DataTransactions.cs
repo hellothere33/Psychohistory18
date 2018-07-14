@@ -33,7 +33,7 @@ namespace LoadCsv
             var clientRows = new List<DataTransactions>();
             if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
             clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
-            clientRows = clientRows.OrderByDescending(a => a.TRANSACTION_DTTM).ToList();
+            clientRows = Utils.SortMostRecentFirst(clientRows);
             return clientRows;
         }
     }

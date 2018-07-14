@@ -23,7 +23,7 @@ namespace LoadCsv
         }
 
         // Methods
-        private async Task LoadCsv()
+        private void LoadCsv()
         {
             rows = uCsv.ReadFromCsv<DataPerformance>(path, delimiter: ",");
         }
@@ -33,16 +33,16 @@ namespace LoadCsv
             var clientRows = new List<DataPerformance>();
             if (string.IsNullOrWhiteSpace(clientId)) return clientRows;
             clientRows = rows.FindAll(r => r.ID_CPTE == clientId);
-            clientRows = clientRows.OrderByDescending(a => a.PERIODID_MY).ToList();
+            //clientRows = Utils.SortMostRecentFirst(clientRows); // we DON'T want to re-order the performance table
             return clientRows;
         }
     }
     [Serializable]
     public class DataPerformance
     {//ID_CPTE,PERIODID_MY,Default
-        public string ID_CPTE     { get; set; }
+        public string   ID_CPTE     { get; set; }
         public DateTime PERIODID_MY { get; set; }
-        public int    Default     { get; set; }
+        public int?     Default     { get; set; }
 
         public DataPerformance() { }
         public bool IsAMatch(DataPerformance r1)

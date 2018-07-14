@@ -16,11 +16,12 @@ namespace LoadCsv
         private const double defaultScoreForWhenMatchingWasntPerformed = 0;
         private const double lowestScoreWhenMatchingWasAtWorst = 0.001;
         public double[] nbs = null;
-        public int      verdict= -1;
+        public int      verdict = -1;
         public int      count { get { return null == nbs? -1 : nbs.Length; } }
+        public string   id = null;
         public NnRow(int maxNbWords)
         {
-            nbs = CreateArray(maxNbWords, defaultScoreForWhenMatchingWasntPerformed);
+            nbs = CreateArray(maxNbWords);
         }
 
         public NnRow(double[] _scores)
@@ -41,8 +42,9 @@ namespace LoadCsv
         /// <summary>
         /// Put several horizontal pieces of a row together, into a long horizontal row
         /// </summary>
-        public NnRow(int Verdict, List<NnRow> ms)
+        public NnRow(int Verdict, List<NnRow> ms, string _id)
         {
+            id = _id;
             verdict = Verdict;
             int expectedNbCols = 0;
             if (uNet.IsNullOrEmpty(ms))
@@ -52,7 +54,7 @@ namespace LoadCsv
             }
             // To guarantee returning a valid output data, we create a fixed sized table then fill in values
             ms.ForEach(m => expectedNbCols += m.nbs.Length);
-            nbs = CreateArray(expectedNbCols, defaultScoreForWhenMatchingWasntPerformed);
+            nbs = CreateArray(expectedNbCols);
 
             int lengthSoFar = 0;
             for (int i = 0; i < ms.Count; i++)
@@ -68,7 +70,7 @@ namespace LoadCsv
                 s += $"{d} ";
             return s;
         }
-        public static double[] CreateArray(int length, double defaultValue)
+        public static double[] CreateArray(int length, double defaultValue = defaultScoreForWhenMatchingWasntPerformed)
         {
             double[] scores = new double[length];
             // all set to 0 by defaultdefault

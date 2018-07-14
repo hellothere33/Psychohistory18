@@ -202,3 +202,8 @@ Andy/CsvHelper.xml
 Andy/packages/
 Andy/*.bin
 Andy/*.xml
+*.model
+Andy/models/
+Andy/logs/
+Andy/AccLoss - all models.*
+Andy/__pycache__/
