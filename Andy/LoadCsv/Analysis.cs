@@ -75,7 +75,7 @@ namespace LoadCsv
             double trainingSplitRatio = 0.7;
             int trainCount = (int)(rows.Count * trainingSplitRatio);
             var trainData = new MLNetData[trainCount];
-            var testData = new MLNetData[rows.Count - trainCount];
+            var testData  = new MLNetData[rows.Count - trainCount];
             MLNetData[] allData = Convert(rows);
             // Split into Training and Testing sets
             Array.Copy(allData, 0, trainData, 0, trainCount);
@@ -88,28 +88,29 @@ namespace LoadCsv
             double acc, auc, f1;
             PredictionModel<MLNetData, MLNetPredict> modelAll, modelTrain, modelBest;
             
-          //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new EnsembleBinaryClassifier                      ());
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.83, auc 0.86, f1 0.45
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FastForestBinaryClassifier                    ()); // acc 0.85, auc 0.89, f1 0.46
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.83, auc 0.86, f1 0.45
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FastForestBinaryClassifier                    ()); // acc 0.85, auc 0.89, f1 0.46
             (acc, auc, f1, modelBest)= TrainAndGetMetrics(allCollection, allCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.85, auc 0.88, f1 0.56
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.80, f1 NaN
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.82, auc 0.86, f1 0.16
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.84, auc 0.86, f1 0.40
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.84, auc 0.86, f1 0.40
-            (acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.86, f1 0.29
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.85, auc 0.88, f1 0.56
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.80, f1 NaN
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.82, auc 0.86, f1 0.16
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.84, auc 0.86, f1 0.40
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.84, auc 0.86, f1 0.40
+            //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.86, f1 0.29
+
+            ///(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new EnsembleBinaryClassifier                      ());
 
 
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.82, auc 0.84, f1 0.45
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastForestBinaryClassifier                    ()); // acc 0.82, auc 0.83, f1 0.23
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.82, auc 0.84, f1 0.46
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.83, auc 0.85, f1 0.37
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.75, f1 NaN
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.81, auc 0.83, f1 0.14
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.83, auc 0.84, f1 0.39
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.82, auc 0.84, f1 0.43
+            //(acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.83, f1 0.34
 
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.82, auc 0.84, f1 0.45
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastForestBinaryClassifier                    ()); // acc 0.82, auc 0.83, f1 0.23
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.82, auc 0.84, f1 0.46
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.83, auc 0.85, f1 0.37
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.75, f1 NaN
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.81, auc 0.83, f1 0.14
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new LogisticRegressionBinaryClassifier            ()); // acc 0.83, auc 0.84, f1 0.39
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticDualCoordinateAscentBinaryClassifier()); // acc 0.82, auc 0.84, f1 0.43
-            (acc, auc, f1, modelTrain) = TrainAndGetMetrics(trainCollection, testCollection, new StochasticGradientDescentBinaryClassifier     ()); // acc 0.83, auc 0.83, f1 0.34
 
             // Evaluate a training model
             //Console.WriteLine($"Accuracy: {metrics.Accuracy:P2}");
@@ -153,7 +154,7 @@ namespace LoadCsv
             return allData;
         }
 
-        public static List<DataSolution> Predict(string NnModelPath)
+        public static List<DataSolution> Predict(string NnModelPath, List<NnRow> dataset)
         {
             List<DataSolution> predictions = new List<DataSolution>();
             if (string.IsNullOrWhiteSpace(NnModelPath)) return predictions;
@@ -161,14 +162,13 @@ namespace LoadCsv
             var task = PredictionModel.ReadAsync<MLNetData, MLNetPredict>(NnModelPath);
             PredictionModel<MLNetData, MLNetPredict> model = task.Result;
 
-            List<NnRow> NnRows = Analysis.AnalyzeAndCreateColumnsForNNetwork(trainNotTest: false, useFull: true, loadBin: false);
-            MLNetData[] testSet = Convert(NnRows);
+            MLNetData[] testSet = Convert(dataset);
             List<MLNetPredict> preds = model.Predict(testSet).ToList();
-            if (NnRows.Count != preds.Count) throw new InvalidDataException();
+            if (dataset.Count != preds.Count) throw new InvalidDataException();
 
             // Write out predictions to CSV
-            for (int i = 0; i < NnRows.Count; i++)
-                predictions.Add(new DataSolution() { ID_CPTE = NnRows[i].id, Default = (int)preds[i].PredictedLabel });
+            for (int i = 0; i < dataset.Count; i++)
+                predictions.Add(new DataSolution() { ID_CPTE = dataset[i].id, Default = (int)preds[i].PredictedLabel });
 
             return predictions;
         }
@@ -251,8 +251,8 @@ namespace LoadCsv
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(temp))
             {
                 // Write header
-                string header = "id"      + sep + 
-                                "verdict" + sep;
+                string header = "ID_CPTE" + sep +
+                                "Default" + sep;
                 for (int i = 0; i < rows[0].nbs.Length-1; i++)
                     header += $"val{i+1}{sep}";
                 header += $"val{rows[0].nbs.Length}";

@@ -11,6 +11,7 @@ class ImportData(object):
     def readMatchedCsvFile(csvfile, separator=","):
         """Returns a pandas dataframe of dimension nbRows X nbValueColumns """
         data = pd.read_csv(csvfile, sep=separator, dtype=np.float64)
+        data[['ID_CPTE']] = data[['ID_CPTE']].astype(int)
         return data
 
     def readCurationCsvExportFile(csvfile, separator=","):

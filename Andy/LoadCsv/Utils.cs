@@ -14,6 +14,11 @@ namespace LoadCsv
     public static class Utils
     {
         private static bool norm = true;
+        private static void CalculateStatsAndCopyToArray(double[] nbs, List<double> vals)
+        {
+            var stat = StatsD.Create(vals);
+            nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+        }
         private static double[] NormalizeToOne(double[] nbs)
         {
             if (norm) { double max = nbs.Max(); max = max == 0 ? 1 : max; nbs = nbs.Select(i => i / max).ToArray(); } // normalize to be under 1.0
@@ -29,7 +34,7 @@ namespace LoadCsv
             {
                 d += e.DelqCycle;
             });
-            return d;
+            return System.Math.Min(1, d/20); // normalize to an arbitrary value near the top (0 ~ 28) with reasonaly high count 
         }
 
         public static double[] GetTransactionsStats(List<DataTransactions> list)
@@ -37,18 +42,17 @@ namespace LoadCsv
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
             for (int i = 0; i < list.Count; i++) vals.Add(list[i].TRANSACTION_AMT);
-            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            CalculateStatsAndCopyToArray(nbs, vals);
             nbs = NormalizeToOne(nbs);
             return nbs;
         }
-
 
         public static double[] GetPaiementsStats(List<DataPaiements> list)
         {
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
             for (int i = 0; i < list.Count; i++) vals.Add(list[i].TRANSACTION_AMT);
-            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            CalculateStatsAndCopyToArray(nbs, vals);
             nbs = NormalizeToOne(nbs);
             return nbs;
         }
@@ -57,7 +61,7 @@ namespace LoadCsv
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
             for (int i = 0; i < list.Count; i++) vals.Add(list[i].CashBalance);
-            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            CalculateStatsAndCopyToArray(nbs, vals);
             nbs = NormalizeToOne(nbs);
             return nbs;
         }
@@ -66,7 +70,7 @@ namespace LoadCsv
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
             for (int i = 0; i < list.Count; i++) vals.Add(list[i].CreditLimit);
-            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            CalculateStatsAndCopyToArray(nbs, vals);
             nbs = NormalizeToOne(nbs);
             return nbs;
         }
@@ -75,7 +79,7 @@ namespace LoadCsv
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
             var vals = new List<double>();
             for (int i = 0; i < list.Count; i++) vals.Add(list[i].CurrentTotalBalance);
-            var stat = StatsD.Create(vals); nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            CalculateStatsAndCopyToArray(nbs, vals);
             nbs = NormalizeToOne(nbs);
             return nbs;
         }

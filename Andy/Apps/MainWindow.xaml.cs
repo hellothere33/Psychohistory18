@@ -34,9 +34,9 @@ namespace Apps
             //FileAnalysis.LoadTestSets();
 
             var NnRows = Analysis.AnalyzeAndCreateColumnsForNNetwork(trainNotTest:true, useFull: true, loadBin: false);
-            //Analysis.WriteToCsvFile(@"NnInputs\hypotheses.csv", NnRows);
+            //Analysis.WriteToCsvFile(@"NnInputs\hypotheses_train.csv", dataset); //Console.WriteLine("Write NN data to CSV for Keras");
             string NnModelPath = Analysis.CreateNNetworkAndLearn(NnRows);
-            Analysis.Predict(NnModelPath);
+            Analysis.Predict(NnModelPath, NnRows);
 
             txMsg.AppendText("Done!\n");
         }
