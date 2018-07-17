@@ -14,7 +14,7 @@ from keras.layers import Dense, Activation
 from keras.models import Sequential, load_model
 from keras.callbacks import ReduceLROnPlateau, CSVLogger, TerminateOnNaN, ModelCheckpoint, EarlyStopping, TensorBoard
 
-seed = 21
+seed = 17
 np.random.seed(seed) # fix random seed for reproducibility
 columnDefaultName = "Default"
 columnID_CPTEName = "ID_CPTE"
@@ -33,8 +33,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random
 
 #======================================================================================
 # Build model(s) for a binary classification
-#uAiModel.createArrayModels(X_train, X_test, y_train, y_test, batch_size = 64, epochs = 50) # using an array of models for comparison
-uAiModel.createSimpleModel(X_train, X_test, y_train, y_test, batch_size = 32, epochs = 100, auc_at_epoch_nb = 1) # using the best model from the array
+uAiModel.createArrayModels(X_train, X_test, y_train, y_test, batch_size = 32, epochs = 50) # using an array of models for comparison
+#uAiModel.createSimpleModel(X_train, X_test, y_train, y_test, batch_size = 32, epochs = 100, auc_at_epoch_nb = 1) # using the best model from the array
 
 #======================================================================================
 # Calculate the performance score (Area Under Curve of ROC) of the model
