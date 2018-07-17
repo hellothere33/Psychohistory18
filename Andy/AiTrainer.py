@@ -33,8 +33,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random
 
 #======================================================================================
 # Build model(s) for a binary classification
-#uAiModel.createArrayModels(X_train, X_test, y_train, y_test, batch_size = 64, epochs = 50) # using an array of models for comparison
-uAiModel.createSimpleModel(X_train, X_test, y_train, y_test, batch_size = 32, epochs = 100, auc_at_epoch_nb = 1) # using the best model from the array
+uAiModel.createArrayModels(X_train, X_test, y_train, y_test, batch_size = 64, epochs = 50) # using an array of models for comparison
+#uAiModel.createSimpleModel(X_train, X_test, y_train, y_test, batch_size = 32, epochs = 100, auc_at_epoch_nb = 1) # using the best model from the array
 
 #======================================================================================
 # Calculate the performance score (Area Under Curve of ROC) of the model

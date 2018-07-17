@@ -207,3 +207,4 @@ Andy/models/
 Andy/logs/
 Andy/AccLoss - all models.*
 Andy/__pycache__/
+Andy/*.config
