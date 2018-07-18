@@ -19,7 +19,7 @@ columnID_CPTEName = "ID_CPTE"
 
 #======================================================================================
 # Load dataset
-path = uCsv.listFilesWithExtensionInDirectoryAndSubDirectories("hypotheses_test - Andy.csv", "NnInputs")[0]
+path    = uCsv.listFilesWithExtensionInDirectoryAndSubDirectories("hypotheses_test - Andy.csv", "NnInputs")[0]
 if not path:
     exit()
 # Get both the uncurate and the matched CSVs
@@ -37,7 +37,8 @@ yProb = model.predict(X, batch_size=128, verbose=2)
 yPdct = [float(np.round(x)) for x in yProb] # round float to either 0.0 or 1.0, it's as if threshold == 0.5
 csvMatched[columnDefaultName] = yProb
 solution = uCsv.keepColumns(csvMatched, [columnID_CPTEName, columnDefaultName])
-uCsv.writePd(path, csvMatched)
+#uCsv.writePd(path, csvMatched)
+uCsv.writePd('NnInputs\\submission - andy.csv', solution)
         
 
 print("All done")

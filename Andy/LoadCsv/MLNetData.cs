@@ -10,7 +10,7 @@ namespace LoadCsv
 {
     public static class Constants
     {
-        public const int len = 200;
+        public const int len = 370;
     }
     public class MLNetData
     {

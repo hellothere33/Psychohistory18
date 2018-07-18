@@ -30,13 +30,17 @@ class uAiModel(object):
     def createSimpleModel(X_train, X_test, y_train, y_test, batch_size = 128, epochs = 20, auc_at_epoch_nb = None):
         Xcols = X_train.shape[1] # number of columns, can vary depending on the how the data was constructed and embedded
         print("------------------------------------------------------------------")
-        print("Training with Neural Network model: D256 Drop20 D128 D32 D4 D1")
-        model = Sequential([Dense(256 , input_shape=(Xcols,)), Activation('relu'),
-                            Dropout(rate=0.20),
-                            Dense(128, input_shape=(Xcols,)), Activation('relu'),
-                            Dense(32 , input_shape=(Xcols,)), Activation('relu'),
-                            Dense(4  , input_shape=(Xcols,)), Activation('relu'),
-                            Dense(1), Activation('sigmoid')])
+        print("Training with Neural Network model: D512 Drop50 D64 Drop50 D128 Drop50 D32 Drop50 D4 D1")
+        model = Sequential([Dense(512 , input_shape=(Xcols,)), Activation('relu'),
+							Dropout(rate=0.50),
+							Dense(64 , input_shape=(Xcols,)), Activation('relu'), 
+							Dropout(rate=0.50),
+							Dense(128,input_shape=(Xcols,)), Activation('relu'),
+							Dropout(rate=0.50),
+							Dense(32 , input_shape=(Xcols,)), Activation('relu'),
+							Dropout(rate=0.50),
+							Dense(4  , input_shape=(Xcols,)), Activation('relu'),
+							Dense(1), Activation('sigmoid')])
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         if not auc_at_epoch_nb or auc_at_epoch_nb is 0:
             model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=epochs, batch_size=batch_size, verbose=1)

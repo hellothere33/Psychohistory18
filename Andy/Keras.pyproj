@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>b97a6543-0448-430b-8b19-796c8ce12663</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AiTrainer.py</StartupFile>
+    <StartupFile>AiPredictor.py</StartupFile>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Keras</Name>

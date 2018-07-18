@@ -36,6 +36,10 @@ namespace LoadCsv
             clientRows = Utils.SortMostRecentFirst(clientRows);
             return clientRows;
         }
+        public static void ExportCsvFile(string _path, List<DataTransactions> rows)
+        {
+            uCsv.WriteToCsv(_path, rows, delimiter: ",");
+        }
     }
     [Serializable]
     public class DataTransactions

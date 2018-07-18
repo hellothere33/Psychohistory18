@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Util.BinarySerializer;
 using Util.Net;
+using sMath = System.Math;
 using DicFact = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<LoadCsv.DataFacturation>>;
 using DicPaie = System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<LoadCsv.DataPaiements>>;
 using DicPerf = System.Collections.Generic.Dictionary<string, LoadCsv.DataPerformance>;
@@ -17,11 +18,25 @@ namespace LoadCsv
         private static void CalculateStatsAndCopyToArray(double[] nbs, List<double> vals)
         {
             var stat = StatsD.Create(vals);
-            nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; nbs[4] = stat.Var;
+            nbs[0] = stat.Min; nbs[1] = stat.Avg; nbs[2] = stat.Max; nbs[3] = stat.Std; //nbs[4] = stat.Var;
         }
         private static double[] NormalizeToOne(double[] nbs)
         {
             if (norm) { double max = nbs.Max(); max = max == 0 ? 1 : max; nbs = nbs.Select(i => i / max).ToArray(); } // normalize to be under 1.0
+            return nbs;
+        }
+        private static double[] NormalizeToOne(double[] nbs, double min, double max)
+        {
+            if (norm)
+            {
+                nbs = nbs.Select(d =>
+                {
+                    if (d < min) return 0;
+                    if (max < d) return 0;
+                    double v = (d - min) / (max - min);
+                    return v;
+                }).ToArray();
+            } // normalize to be under 1.0
             return nbs;
         }
 
@@ -87,9 +102,9 @@ namespace LoadCsv
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
-        public static double[] GetPaiements(DateTime predictionStartDate, List<DataPaiements> list, int days)
+        public static double[] GetPaiements(int len, DateTime predictionStartDate, List<DataPaiements> list, int days)
         {
-            double[] nbs = NnRow.CreateArray(30);
+            double[] nbs = NnRow.CreateArray(len);
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataPaiements>(list);
@@ -110,9 +125,89 @@ namespace LoadCsv
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
-        public static double[] GetFacturationCashBalance(DateTime predictionStartDate, List<DataFacturation> list, int days)
+        public static double[] GetPaiementsFreqStats(int nbPeriods, DateTime predictionStartDate, List<DataPaiements> list, int days)
         {
-            double[] nbs = NnRow.CreateArray(30);
+            int nbStats = 4;
+            var allStats = new double[nbPeriods * nbStats];
+            if (uNet.IsNullOrEmpty(list)) return allStats;
+
+            var tempList = new List<DataPaiements>(list);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbPeriods && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+
+                // Calculate frequencies
+                var durations = new List<double>();
+                double[] stats = new double[nbStats];
+                if (3 <= shortList.Count)
+                {
+                    for (int j = 0; j < shortList.Count - 1; j++)
+                    {
+                        TimeSpan duration = shortList[j].TRANSACTION_DTTM - shortList[j + 1].TRANSACTION_DTTM;
+                        durations.Add(duration.TotalHours);
+                    }
+                    CalculateStatsAndCopyToArray(stats, durations);
+                    stats = NormalizeToOne(stats, 0, days*24);
+                }
+                allStats[i*4    ] = stats[0];
+                allStats[i*4 + 1] = stats[1];
+                allStats[i*4 + 2] = stats[2];
+                allStats[i*4 + 3] = stats[3];
+            }
+            
+            return allStats;
+        }
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetTransactionsFreqStats(int nbPeriods, DateTime predictionStartDate, List<DataTransactions> list, int days)
+        {
+            int nbStats = 4;
+            var allStats = new double[nbPeriods * nbStats];
+            if (uNet.IsNullOrEmpty(list)) return allStats;
+
+            var tempList = new List<DataTransactions>(list);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbPeriods && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+
+                // Calculate frequencies
+                var durations = new List<double>();
+                double[] stats = new double[nbStats];
+                if (3 <= shortList.Count)
+                {
+                    for (int j = 0; j < shortList.Count - 1; j++)
+                    {
+                        TimeSpan duration = shortList[j].TRANSACTION_DTTM - shortList[j + 1].TRANSACTION_DTTM;
+                        durations.Add(duration.TotalHours);
+                    }
+                    CalculateStatsAndCopyToArray(stats, durations);
+                    stats = NormalizeToOne(stats, 0, days*24);
+                }
+                allStats[i*4    ] = stats[0];
+                allStats[i*4 + 1] = stats[1];
+                allStats[i*4 + 2] = stats[2];
+                allStats[i*4 + 3] = stats[3];
+            }
+            
+            return allStats;
+        }
+
+
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCashBalance(int len, DateTime predictionStartDate, List<DataFacturation> list, int days)
+        {
+            double[] nbs = NnRow.CreateArray(len);
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
@@ -134,9 +229,9 @@ namespace LoadCsv
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
-        public static double[] GetFacturationCurrentTotalBalance(DateTime predictionStartDate, List<DataFacturation> list, int days)
+        public static double[] GetFacturationCurrentTotalBalance(int len, DateTime predictionStartDate, List<DataFacturation> list, int days)
         {
-            double[] nbs = NnRow.CreateArray(30);
+            double[] nbs = NnRow.CreateArray(len);
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
@@ -154,13 +249,85 @@ namespace LoadCsv
             nbs = NormalizeToOne(nbs);
             return nbs;
         }
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCreditLimit(int len, DateTime predictionStartDate, List<DataFacturation> list, int days,
+                                double min, double max)
+        {
+            double[] nbs = NnRow.CreateArray(len);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataFacturation>(list);
+            tempList.OrderByDescending(e => e.PERIODID_MY);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
+                double sum = shortList.Sum(e => e.CreditLimit);
+                nbs[i] = sum;
+            }
+            nbs = NormalizeToOne(nbs, min, max);
+            return nbs;
+        }
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCurrentTotalBalance(int len, DateTime predictionStartDate, List<DataFacturation> list, int days,
+                                double min, double max)
+        {
+            double[] nbs = NnRow.CreateArray(len);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataFacturation>(list);
+            tempList.OrderByDescending(e => e.PERIODID_MY);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
+                double sum = shortList.Sum(e => e.CurrentTotalBalance);
+                nbs[i] = sum;
+            }
+            nbs = NormalizeToOne(nbs, min, max);
+            return nbs;
+        }
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetFacturationCashBalance(int len, DateTime predictionStartDate, List<DataFacturation> list, int days,
+                                double min, double max)
+        {
+            double[] nbs = NnRow.CreateArray(len);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataFacturation>(list);
+            tempList.OrderByDescending(e => e.PERIODID_MY);
+            DateTime Start = predictionStartDate;
+            DateTime End = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
+                double sum = shortList.Sum(e => e.CashBalance);
+                nbs[i] = sum;
+            }
+            nbs = NormalizeToOne(nbs, min, max);
+            return nbs;
+        }
 
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
-        public static double[] GetTransactions(DateTime predictionStartDate, List<DataTransactions> list, int days)
+        public static double[] GetTransactions(int len, DateTime predictionStartDate, List<DataTransactions> list, int days)
         {
-            double[] nbs = NnRow.CreateArray(30);
+            double[] nbs = NnRow.CreateArray(len);
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataTransactions>(list);

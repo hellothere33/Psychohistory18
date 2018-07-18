@@ -40,6 +40,8 @@ namespace LoadCsv
             if (loadBin) Utils.GetDataFromBinFiles(out dicFact, out dicPaie, out dicPerf, out dicTran);
             else         Utils.GetDataFromCsvFiles(out dicFact, out dicPaie, out dicPerf, out dicTran, trainNotTest, useFull);
 
+            //ExportDefaultedTransactions(dicPerf, dicTran); // debugOnly
+
 
             // create csv files containing that embed text in numerical values, by matching parts of business name and address
             int nbRows = dicPerf.Keys.Count;
@@ -62,6 +64,26 @@ namespace LoadCsv
             dataset.RemoveAll(e => null == e);
             return dataset;
         }
+
+        public static void ExportDefaultedTransactions(DicPerf dicPerf, DicTran dicTran)
+        {
+            var defaultedIds  = new List<string>();
+            foreach (var key in dicPerf.Keys)
+            {
+                if (1 == dicPerf[key].Default) defaultedIds.Add(key);
+            }
+
+            var defaultedTran = new List<DataTransactions>();
+            foreach (var key in dicTran.Keys)
+            {
+                if (!defaultedIds.Contains(key)) continue;
+                defaultedTran.AddRange(dicTran[key]);
+            }
+
+            FileTransactions.ExportCsvFile("Transactions_defaultOnly.csv", defaultedTran);
+        }
+
+
         public static bool WriteToCsvFile(string CsvPath, List<NnRow> rows)
         {
             if (!string.IsNullOrWhiteSpace(CsvPath))
@@ -90,7 +112,7 @@ namespace LoadCsv
             
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.83, auc 0.86, f1 0.45
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FastForestBinaryClassifier                    ()); // acc 0.85, auc 0.89, f1 0.46
-            (acc, auc, f1, modelBest)= TrainAndGetMetrics(allCollection, allCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
+            (acc, auc, f1, modelBest)= TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.85, auc 0.88, f1 0.56
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.80, f1 NaN
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.82, auc 0.86, f1 0.16
@@ -199,16 +221,46 @@ namespace LoadCsv
             // nb of delinquent cycles already
             ms.Add(new NnRow(Utils.GetNbOfDelinquencies(rowsFact)));
 
-            ms.Add(new NnRow(Utils.GetFacturationCashBalance        (predictionStartDate, rowsFact, 28)));
-            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(predictionStartDate, rowsFact, 28)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance        (26, predictionStartDate, rowsFact, 28)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(26, predictionStartDate, rowsFact, 28)));
             ms.Add(new NnRow(Utils.GetFacturationCashBalance        (rowsFact))); // basic statistics such as min, max, average, std, var
             ms.Add(new NnRow(Utils.GetFacturationCreditLimit        (rowsFact))); // basic statistics such as min, max, average, std, var
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(rowsFact))); // basic statistics such as min, max, average, std, var
+
+            // Vishal's quarterly credit limit 
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3,    0,  500)));
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3,  500, 2000)));
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3, 2000, 5000)));
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3, 5000,15000)));
             
-            ms.Add(new NnRow(Utils.GetPaiements        (predictionStartDate, rowsPaie, 28))); // paiements amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3,    0,  500)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3,  500, 1000)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3, 1000, 2500)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3, 2500, 5000)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3, 5000, 8000)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3, 8000,12000)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance(8, predictionStartDate, rowsFact, 28 * 3,12000,17000)));
+            
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,    0,  500)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,  500, 1000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3, 1000, 2000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3, 2000, 4000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3, 4000, 8000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3, 8000,16000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,16000,32000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,32000,48000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,48000,64000)));
+
+            // paiement frequencies by period
+            ms.Add(new NnRow(Utils.GetPaiementsFreqStats   ( 8, predictionStartDate, rowsPaie, 28 * 3)));
+            ms.Add(new NnRow(Utils.GetTransactionsFreqStats(12, predictionStartDate, rowsTran, 28)));
+
+
+            
+            ms.Add(new NnRow(Utils.GetPaiements        (26, predictionStartDate, rowsPaie, 28))); // paiements amounts in 4 weeks
             ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie))); // basic statistics such as min, max, average, std, var
 
-            ms.Add(new NnRow(Utils.GetTransactions(predictionStartDate, rowsTran, 28))); // transaction amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetTransactions(26, predictionStartDate, rowsTran, 28))); // transaction amounts in 4 weeks
             ms.Add(new NnRow(Utils.GetTransactionsStats(rowsTran))); // basic statistics such as min, max, average, std, var
 
             

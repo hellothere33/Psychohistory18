@@ -209,3 +209,5 @@ Andy/AccLoss - all models.*
 Andy/__pycache__/
 *.xlsx
 Andy/*.config
+Andy/NnInputs/*.csv
+*.stackdump
