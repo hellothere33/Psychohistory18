@@ -261,7 +261,7 @@ namespace LoadCsv
             ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie))); // basic statistics such as min, max, average, std, var
 
             // paiement frequencies by period
-            ms.Add(new NnRow(Utils.GetPaiementsFreqStats   ( 8, predictionStartDate, rowsPaie, 28 * 3)));
+            ms.Add(new NnRow(Utils.GetPaiementsFreqStats   (13, predictionStartDate, rowsPaie, 28 * 2)));
             ms.Add(new NnRow(Utils.GetTransactionsFreqStats(12, predictionStartDate, rowsTran, 28)));
 
             ms.Add(new NnRow(Utils.GetTransactions(70, predictionStartDate, rowsTran, 7))); // transaction amounts in 4 weeks
