@@ -217,6 +217,7 @@ class uAiModel(object):
         models.append(("D768 Drop60 D64 Drop60 D128 Drop60 D32 Drop60 D4 D1", [Dense(768 , input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.60), Dense(64 , input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.60), Dense(128,input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.60), Dense(32 , input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.60), Dense(4  , input_shape=(Xcols,)), Activation('relu'), Dense(1), Activation('sigmoid')]))
 
 
+
         # models.append(("D512 MaxP2-1 D128 MaxP2-1 D32 D4 Drop30 D1", [Dense(512 , input_shape=(Xcols,)), Activation('relu'), MaxPooling1D(pool_size=2, strides=1), Dense(128,input_shape=(Xcols,)), Activation('relu'), MaxPooling1D(pool_size=2, strides=1), Dense(32 , input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.30), Dense(4, input_shape=(Xcols,)), Activation('relu'), Dense(1), Activation('sigmoid')]))
         # models.append(("D512 MaxP2-2 D128 MaxP2-2 D32 D4 Drop40 D1", [Dense(512 , input_shape=(Xcols,)), Activation('relu'), MaxPooling1D(pool_size=2, strides=2), Dense(128,input_shape=(Xcols,)), Activation('relu'), MaxPooling1D(pool_size=2, strides=2), Dense(32 , input_shape=(Xcols,)), Activation('relu'), Dropout(rate=0.40), Dense(4, input_shape=(Xcols,)), Activation('relu'), Dense(1), Activation('sigmoid')]))		
 
