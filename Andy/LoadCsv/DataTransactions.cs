@@ -47,7 +47,7 @@ namespace LoadCsv
      //TRANSACTION_AMT,TRANSACTION_CATEGORY_XCD,TRANSACTION_DTTM,TRANSACTION_TYPE_XCD,SICGROUP
         public string ID_CPTE                  { get; set; }
         public string MERCHANT_CATEGORY_XCD    { get; set; }
-        public int    MERCHANT_CITY_NAME       { get; set; }
+        public string MERCHANT_CITY_NAME       { get; set; }
         public string MERCHANT_COUNTRY_XCD     { get; set; }
         public string DECISION_XCD             { get; set; }
         public double PRIOR_CREDIT_LIMIT_AMT   { get; set; }

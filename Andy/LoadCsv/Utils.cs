@@ -52,6 +52,87 @@ namespace LoadCsv
             return System.Math.Min(1, d/20); // normalize to an arbitrary value near the top (0 ~ 28) with reasonaly high count 
         }
 
+        private static void Init_Categories(List<DataTransactions> list, DateTime predictionStartDate, int nbDaysMostRecent, 
+                                            List<string> categories, out double[] nbs, out List<DataTransactions> shortList)
+        {
+            nbs            = NnRow.CreateArray(categories.Count);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            Start          = End - TimeSpan.FromDays(nbDaysMostRecent);
+            shortList      = list.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+        }
+        
+        public static double[] GetTransactionsCategories_SICGROUP(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"AT","AX","AA","BA","AJ","AV","AW","AN","AO","AE","AH","AQ","AL","AG","AB","AD","AY","AM","BB","BC","AP","AI","AC","AU","AZ","AR","AF","AS","AK"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.SICGROUP == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_TRANSACTION_TYPE_XCD(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"F","B","G","E","D","C","A"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.TRANSACTION_TYPE_XCD == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_TRANSACTION_CATEGORY_XCD(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"E","B","C","A","D"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.TRANSACTION_CATEGORY_XCD == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_DECISION_XCD(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"C","A","B"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.DECISION_XCD == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_MERCHANT_COUNTRY_XCD(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"DP","BB","DA","AF","BT","BW","CD","AS","CE","EI","BJ","DU","BX","BZ","AJ","ED","DQ","EF","CK","DO","DI","AN","BD","CW"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.MERCHANT_COUNTRY_XCD == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_MERCHANT_CITY_NAME(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> {"2122999","735207","2734290","2271380","179603","23849","2871582","452039","596711","1461886","680536","2720203","1533431","1389367","1652194","365767","414343","1523946","2328808","2859894","597796","484852"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.MERCHANT_CITY_NAME == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+        public static double[] GetTransactionsCategories_MERCHANT_CATEGORY_XCD(List<DataTransactions> list, DateTime predictionStartDate, int nbCategories, int nbDaysMostRecent)
+        {
+            var categories = new List<string> { "KK","FF","EE","JJ","YZ","V","QQ","AD","OO","HH","DD","PP","YY","J","VV","BC","CC","W","UU","AG"};
+            categories = categories.GetRange(0, nbCategories);
+            Init_Categories(list, predictionStartDate, nbDaysMostRecent, categories, out double[] nbs, out List<DataTransactions> shortList);
+            for (int i = 0; i < categories.Count; i++)
+                nbs[i] = shortList.Count(e => e.MERCHANT_CATEGORY_XCD == categories[i]);
+            nbs = NormalizeToOne(nbs, 0, list.Count);
+            return nbs;
+        }
+
         public static double[] GetTransactionsStats(List<DataTransactions> list)
         {
             double[] nbs = NnRow.CreateArray(5); if (uNet.IsNullOrEmpty(list)) return nbs;
@@ -219,8 +300,9 @@ namespace LoadCsv
                 End   = Start;
                 Start = End - TimeSpan.FromDays(days);
                 var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
-                double sum = shortList.Sum(e => e.CashBalance);
-                nbs[i] = sum;
+                if (shortList.Count <= 0) continue;
+                double val = shortList.Max(e => e.CashBalance);
+                nbs[i] = val;
             }
             nbs = NormalizeToOne(nbs);
             return nbs;
@@ -243,8 +325,9 @@ namespace LoadCsv
                 End   = Start;
                 Start = End - TimeSpan.FromDays(days);
                 var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
-                double sum = shortList.Sum(e => e.CurrentTotalBalance);
-                nbs[i] = sum;
+                if (shortList.Count <= 0) continue;
+                double val = shortList.Max(e => e.CurrentTotalBalance);
+                nbs[i] = val;
             }
             nbs = NormalizeToOne(nbs);
             return nbs;
@@ -267,8 +350,9 @@ namespace LoadCsv
                 End   = Start;
                 Start = End - TimeSpan.FromDays(days);
                 var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
-                double sum = shortList.Sum(e => e.CreditLimit);
-                nbs[i] = sum;
+                if (shortList.Count <= 0) continue;
+                double val = shortList.Max(e => e.CreditLimit);
+                nbs[i] = val;
             }
             nbs = NormalizeToOne(nbs, min, max);
             return nbs;
@@ -291,8 +375,9 @@ namespace LoadCsv
                 End   = Start;
                 Start = End - TimeSpan.FromDays(days);
                 var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
-                double sum = shortList.Sum(e => e.CurrentTotalBalance);
-                nbs[i] = sum;
+                if (shortList.Count <= 0) continue;
+                double val = shortList.Max(e => e.CurrentTotalBalance);
+                nbs[i] = val;
             }
             nbs = NormalizeToOne(nbs, min, max);
             return nbs;
@@ -315,8 +400,9 @@ namespace LoadCsv
                 End = Start;
                 Start = End - TimeSpan.FromDays(days);
                 var shortList = tempList.FindAll(e => Start < e.PERIODID_MY && e.PERIODID_MY <= End).ToList();
-                double sum = shortList.Sum(e => e.CashBalance);
-                nbs[i] = sum;
+                if (shortList.Count <= 0) continue;
+                double val = shortList.Max(e => e.CashBalance);
+                nbs[i] = val;
             }
             nbs = NormalizeToOne(nbs, min, max);
             return nbs;
@@ -342,6 +428,30 @@ namespace LoadCsv
                 nbs[i] = sum;
             }
             nbs = NormalizeToOne(nbs);
+            return nbs;
+        }
+
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
+        public static double[] GetTransactions_Max_PRIOR_CREDIT_LIMIT_AMT(int len, DateTime predictionStartDate, List<DataTransactions> list, int days)
+        {
+            double[] nbs = NnRow.CreateArray(len);
+            if (uNet.IsNullOrEmpty(list)) return nbs;
+
+            var tempList = new List<DataTransactions>(list);
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortList = tempList.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+                if (shortList.Count <= 0) continue;
+                double max = shortList.Max(e => e.PRIOR_CREDIT_LIMIT_AMT);
+                nbs[i] = max;
+            }
+            nbs = NormalizeToOne(nbs, 0, 39709); // -48~+18044 for A, 0~+5427 for B, -5709~+39709 for C,
             return nbs;
         }
         #endregion

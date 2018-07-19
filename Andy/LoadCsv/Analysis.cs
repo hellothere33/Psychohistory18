@@ -227,7 +227,12 @@ namespace LoadCsv
             ms.Add(new NnRow(Utils.GetFacturationCreditLimit        (rowsFact))); // basic statistics such as min, max, average, std, var
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(rowsFact))); // basic statistics such as min, max, average, std, var
 
-            // Vishal's quarterly credit limit 
+            // Vishal's quarterly credit limit
+/**/
+            ms.Add(new NnRow(Utils.GetFacturationCreditLimit        (12, predictionStartDate, rowsFact, 28 * 2, 0, 15000)));
+            ms.Add(new NnRow(Utils.GetFacturationCashBalance        (12, predictionStartDate, rowsFact, 28 * 2, 0, 17000)));
+            ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(12, predictionStartDate, rowsFact, 28 * 2, 0, 64000)));
+/*
             ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3,    0,  500)));
             ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3,  500, 2000)));
             ms.Add(new NnRow(Utils.GetFacturationCreditLimit(8, predictionStartDate, rowsFact, 28 * 3, 2000, 5000)));
@@ -250,20 +255,27 @@ namespace LoadCsv
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,16000,32000)));
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,32000,48000)));
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(8, predictionStartDate, rowsFact, 28 * 3,48000,64000)));
+/**/
+            
+            ms.Add(new NnRow(Utils.GetPaiements        (26, predictionStartDate, rowsPaie, 28))); // paiements amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie))); // basic statistics such as min, max, average, std, var
 
             // paiement frequencies by period
             ms.Add(new NnRow(Utils.GetPaiementsFreqStats   ( 8, predictionStartDate, rowsPaie, 28 * 3)));
             ms.Add(new NnRow(Utils.GetTransactionsFreqStats(12, predictionStartDate, rowsTran, 28)));
 
-
-            
-            ms.Add(new NnRow(Utils.GetPaiements        (26, predictionStartDate, rowsPaie, 28))); // paiements amounts in 4 weeks
-            ms.Add(new NnRow(Utils.GetPaiementsStats   (rowsPaie))); // basic statistics such as min, max, average, std, var
-
-            ms.Add(new NnRow(Utils.GetTransactions(26, predictionStartDate, rowsTran, 28))); // transaction amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetTransactions(70, predictionStartDate, rowsTran, 7))); // transaction amounts in 4 weeks
+            ms.Add(new NnRow(Utils.GetTransactions_Max_PRIOR_CREDIT_LIMIT_AMT(12, predictionStartDate, rowsTran, 28))); // transaction amounts in 4 weeks
             ms.Add(new NnRow(Utils.GetTransactionsStats(rowsTran))); // basic statistics such as min, max, average, std, var
 
-            
+            // Transaction's categories
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_MERCHANT_CATEGORY_XCD   (rowsTran, predictionStartDate, 5, 28 * 6))); // 20 in 55
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_MERCHANT_CITY_NAME      (rowsTran, predictionStartDate, 5, 28 * 6))); // 22 in 4048
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_MERCHANT_COUNTRY_XCD    (rowsTran, predictionStartDate, 5, 28 * 6))); // 24 in 71
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_DECISION_XCD            (rowsTran, predictionStartDate, 3, 28 * 6))); // 3
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_TRANSACTION_CATEGORY_XCD(rowsTran, predictionStartDate, 5, 28 * 6))); // 5
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_TRANSACTION_TYPE_XCD    (rowsTran, predictionStartDate, 5, 28 * 6))); // 7
+            ms.Add(new NnRow(Utils.GetTransactionsCategories_SICGROUP                (rowsTran, predictionStartDate, 5, 28 * 6))); // 29
 
 
             //---------------------------------------------
