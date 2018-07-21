@@ -112,7 +112,7 @@ namespace LoadCsv
             
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new AveragedPerceptronBinaryClassifier            ()); // acc 0.83, auc 0.86, f1 0.45
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FastForestBinaryClassifier                    ()); // acc 0.85, auc 0.89, f1 0.46
-            (acc, auc, f1, modelBest)= TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
+            (acc, auc, f1, modelBest) = TrainAndGetMetrics(trainCollection, testCollection, new FastTreeBinaryClassifier                      ()); // acc 0.95, auc 0.97, f1 0.85
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new FieldAwareFactorizationMachineBinaryClassifier()); // acc 0.85, auc 0.88, f1 0.56
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new GeneralizedAdditiveModelBinaryClassifier      ()); // acc 0.81, auc 0.80, f1 NaN
             //(acc, auc, f1, modelAll) = TrainAndGetMetrics(allCollection, allCollection, new LinearSvmBinaryClassifier                     ()); // acc 0.82, auc 0.86, f1 0.16
@@ -220,6 +220,11 @@ namespace LoadCsv
 
             // nb of delinquent cycles already
             ms.Add(new NnRow(Utils.GetNbOfDelinquencies(rowsFact)));
+
+
+            ms.Add(new NnRow(Utils.GetSpendsAndPaymentsAfterStatement(26, predictionStartDate, rowsFact, rowsPaie, rowsTran, 28)));
+
+
 
             ms.Add(new NnRow(Utils.GetFacturationCashBalance        (26, predictionStartDate, rowsFact, 28)));
             ms.Add(new NnRow(Utils.GetFacturationCurrentTotalBalance(26, predictionStartDate, rowsFact, 28)));

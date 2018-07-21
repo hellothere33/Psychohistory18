@@ -286,13 +286,68 @@ namespace LoadCsv
         /// <summary>
         /// Assumption: input data already sorted by most recent first.
         /// </summary>
+        public static double[] GetSpendsAndPaymentsAfterStatement(int len, DateTime predictionStartDate, List<DataFacturation> rowsFact,
+                                                                  List<DataPaiements> rowsPaie, List<DataTransactions> rowsTran, int days)
+        {
+            var allStats = new List<double>();
+            DateTime Start = predictionStartDate;
+            DateTime End   = predictionStartDate;
+            for (int i = 0; i < len; i++)
+            {
+                End   = Start;
+                Start = End - TimeSpan.FromDays(days);
+                var shortTran = rowsTran.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+                if (shortTran.Count <= 0) continue;
+                shortTran = shortTran.OrderByDescending(e => e.TRANSACTION_DTTM).ToList();
+
+                var shortPaie = null == rowsPaie ? new List<DataPaiements>() :
+                                rowsPaie.FindAll(e => Start < e.TRANSACTION_DTTM && e.TRANSACTION_DTTM <= End).ToList();
+                if (shortPaie.Count <= 0) continue;
+                shortPaie = shortPaie.OrderByDescending(e => e.TRANSACTION_DTTM).ToList();
+
+                var shortFact = null == rowsFact ? new List<DataFacturation>() :
+                                rowsFact.FindAll(e => (Start - TimeSpan.FromDays(days + 90)) < e.PERIODID_MY && e.PERIODID_MY <= Start).ToList();
+                shortFact = shortFact.OrderByDescending(e => e.PERIODID_MY).ToList();
+                double lastBalance = shortFact.Count<=0? 0: shortFact[0].CurrentTotalBalance;
+
+
+                List<(DateTime date, double val)> chronological = new List<(DateTime date, double val)>();
+                //chronological.Add((new DateTime(1000, 1, 1), lastBalance));
+                foreach (var e in shortTran) chronological.Add((e.TRANSACTION_DTTM,  e.TRANSACTION_AMT));
+                foreach (var e in shortPaie) chronological.Add((e.TRANSACTION_DTTM, -e.TRANSACTION_AMT));
+                chronological = chronological.OrderBy(e => e.date).ToList(); // oldest first
+
+                var vals = new List<double>();
+                foreach (var e in chronological)
+                {
+                    lastBalance += e.val;
+                    vals.Add(lastBalance);
+                }
+
+
+                double[] stats = NnRow.CreateArray(4);
+                CalculateStatsAndCopyToArray(stats, vals);
+                stats = NormalizeToOne(stats, -60000, 60000);
+                allStats.AddRange(stats);
+            }
+
+            // !!! here we want a neutral balance to be 0.5, so we can have both +- values in the 0.0 ~ 1.0 output range
+            double neutral = 0.5;
+            double[] nbs = NnRow.CreateArray(len*4, neutral);
+            for (int i = 0; i < nbs.Length && i < allStats.Count; i++)
+                nbs[i] = allStats[i];
+            return nbs;
+        }
+
+        /// <summary>
+        /// Assumption: input data already sorted by most recent first.
+        /// </summary>
         public static double[] GetFacturationCashBalance(int len, DateTime predictionStartDate, List<DataFacturation> list, int days)
         {
             double[] nbs = NnRow.CreateArray(len);
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
-            tempList.OrderByDescending(e => e.PERIODID_MY);
             DateTime Start = predictionStartDate;
             DateTime End   = predictionStartDate;
             for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
@@ -317,7 +372,6 @@ namespace LoadCsv
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
-            tempList.OrderByDescending(e => e.PERIODID_MY);
             DateTime Start = predictionStartDate;
             DateTime End   = predictionStartDate;
             for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
@@ -342,7 +396,6 @@ namespace LoadCsv
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
-            tempList.OrderByDescending(e => e.PERIODID_MY);
             DateTime Start = predictionStartDate;
             DateTime End   = predictionStartDate;
             for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
@@ -367,7 +420,6 @@ namespace LoadCsv
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
-            tempList.OrderByDescending(e => e.PERIODID_MY);
             DateTime Start = predictionStartDate;
             DateTime End   = predictionStartDate;
             for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
@@ -392,7 +444,6 @@ namespace LoadCsv
             if (uNet.IsNullOrEmpty(list)) return nbs;
 
             var tempList = new List<DataFacturation>(list);
-            tempList.OrderByDescending(e => e.PERIODID_MY);
             DateTime Start = predictionStartDate;
             DateTime End = predictionStartDate;
             for (int i = 0; i < nbs.Length && 0 < tempList.Count; i++)
